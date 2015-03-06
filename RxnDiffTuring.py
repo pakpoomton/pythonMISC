@@ -1,28 +1,39 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-size = 100  # size of the 2D grid
-dx = 2./size  # space step
 
-def simTuring(x):
+# set parameters of PDE
+a = 2.8e-4
+b = 5e-3
+tau = .1
+k = -.005
+
+# set parameters for discretize time and space
+# note that: dt<=dx**2/2 ensures stable scheme
+T = 10.0  # total time
+dt = .9 * dx**2/2  # time step
+n = int(T/dt)
+
+
+
+
+def simTuring(size):
+
+# This function simulate reaction diffusion  in the space
+# discretized to a matrix of size x size
+    dx = 2./size  # space step    ..domain size = 2io
     
-    a = 2.8e-4
-    b = 5e-3
-    tau = .1
-    k = -.005
-
-
-    T = 10.0  # total time
-    dt = .9 * dx**2/2  # time step
-    n = int(T/dt)
-
-
+# u  represent concentration of a substance favoring
+# skin pigmantation; v represents another substance
+# interacting with u and prevent pigmentation. Here
+# we start from uniform random u and v each grid point in space
     U = np.random.rand(size, size)
     V = np.random.rand(size, size)
 
 # We simulate the PDE with the finite difference method.
     for i in range(n):
-    # We compute the Laplacian of u and v.
+    # We compute the Laplacian of u and v...used as estimated changes
+    # of U and V in each time step
         deltaU = laplacian(U)
         deltaV = laplacian(V)
     # We take the values of u and v inside the grid.
@@ -45,7 +56,7 @@ def simTuring(x):
 
 
 
-def laplacian(Z):
+def laplacian(Z): #discrete estimation of dZ matrix
     Ztop = Z[0:-2,1:-1]
     Zleft = Z[1:-1,0:-2]
     Zbottom = Z[2:,1:-1]
