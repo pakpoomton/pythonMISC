@@ -1,0 +1,10 @@
+import requests
+
+
+
+url = 'http://bioengineering.stanford.edu/faculty/'
+source_code = requests.get(url)
+
+dir(source_code)
+plain_text = source_code.text
+
