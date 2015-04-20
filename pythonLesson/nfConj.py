@@ -5,6 +5,14 @@ from scipy.integrate import odeint
 #plt.ion() # this allow interactive mode so we can input through command line
           # and see changes in the figure right away without rerunning it.
 
+# initial conditions
+r0 = 100        # initial nutrient level
+n_plus0 = 0.01    # initial cell bearing conjugation plasmid
+n0 = 1         # initial cell without conjugation plasmid
+ahl0 = 0
+y0 = [r0, n_plus0, n0, ahl0] # initial condition vector
+
+
 #define parameters for conjugation and growth
 e = 1 # nutrient take up rate for uninfected cell
 e_plus = 1 # nutrient take up rate for infected cell 
@@ -22,21 +30,15 @@ gamma_max = 0.1 # maximal conjugation rate (when AHL level is saturated)
 AHL_diss = 5 # dissociation eq constant for AHL to conj machinery 
 AHL_n = 100 # AHL cooperativity
 
-# initial conditions
-r0 = 100        # initial nutrient level
-n_plus0 = 0.01    # initial cell bearing conjugation plasmid
-n0 = 1         # initial cell without conjugation plasmid
-ahl0 = 0.001
-y0 = [r0, n_plus0, n0, ahl0] # initial condition vector
-t = np.linspace(0, 10., 1000) # time grid
+AHL_degMax = 0 # maximal degradation rate of AHL by AiiA
+AHL_degBind = 1 # binding dissociation const for AHL to deg machinery
 
 # define growth equation
 def g(nutrient):
         return P*nutrient/(Q+nutrient)
-
 # define conjugation rate equation
 def gamma(signal):
-        return gamma_max*signal**AHL_n/(AHL_diss**AHL_n + signal**AHL_n)
+        return gamma_max*AHL_diss**AHL_n/(AHL_diss**AHL_n + signal**AHL_n)
 
 # solve the system dy/dt = f(y, t)
 def f(y,t):
@@ -50,6 +52,10 @@ def f(y,t):
         f2 = n*g(r) - gamma(ahl)*n_plus*n + tau*n_plus
         f3 = n_plus*AHL_prod
         return [f0, f1, f2, f3]
+
+
+
+t = np.linspace(0, 10., 1000) # time grid
 
 
 # solve the DEs
@@ -77,7 +83,7 @@ f, axarr = plt.subplots(2, sharex=True)
 axarr[0].plot(t, AHL_array, color = 'k', marker = '.')
 axarr[0].set_title('Plasmid Infection Dynamics')
 axarr[0].set_ylabel('AHL')
-axarr[0].axis([min(t), max(t), -0.1, 5*AHL_diss])
+#axarr[0].axis([min(t), max(t), -0.1, 5*AHL_diss])
 axarr[1].scatter(t, r_array, label='Nutrient', color = 'b', marker = '.')
 axarr[1].scatter(t, n_plus_array, label='Infected', color = 'g', marker = '.')
 axarr[1].scatter(t, n_array, label='Free', color = 'r', marker = '.')
@@ -85,3 +91,4 @@ axarr[1].axis([min(t), max(t), -1, r0+n_plus0+n0])
 plt.legend(loc=2)
 axarr[1].set_ylabel('Population')
 axarr[1].set_xlabel('Time')
+plt.show()

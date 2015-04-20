@@ -1,0 +1,11 @@
+def evolve_ts(u, ui, param):
+   """
+   This function uses a numpy expression to
+   evaluate the derivatives in the Laplacian, and
+   calculates u[i,j] based on ui[i,j].
+   """
+   a = param[1]
+   dt = param[2]
+   dx = param[3]
+   dy = param[4]
+   u[1:-1, 1:-1] = ui[1:-1, 1:-1] + a*dt*( (ui[2:, 1:-1] - 2*ui[1:-1, 1:-1] + ui[:-2, 1:-1])/dx2 + (ui[1:-1, 2:] - 2*ui[1:-1, 1:-1] + ui[1:-1, :-2])/dy2 )
