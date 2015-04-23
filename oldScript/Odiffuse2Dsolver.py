@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from pylab import *
 
 
-def evolve_ts(u, ui, a, dx2, dy2, dt):
+def evolve_ts(u, ui, a, dx, dy, dx2, dy2, dt):
    """
    This function uses a numpy expression to
    evaluate the derivatives in the Laplacian, and
@@ -30,17 +30,16 @@ def diffSolve(ui, a, dx, dy , timeTotal):
     outputMat = []
     outputMat.append(ui)
 
-    timesteps = int(timeTotal/dt)
+    timesteps = round(timeTotal/dt)
     print "dt =  "+str(dt)
-    print "timestep = " + str(timesteps)
     
     # Now, start the time evolution calculation...
     tstart = time.time()
     for m in range(1, timesteps+1):
-	evolve_ts(u, ui, a, dx2, dy2, dt)
+	evolve_ts(u, ui, a, dx, dy, dx2, dy2, dt)
         ui = sp.copy(u)
         outputMat.append(sp.copy(u))
-	#print "Computing u for m =", m
+	print "Computing u for m =", m
     tfinish = time.time()
     print "Done."
     print "Total time: ", tfinish-tstart, "s"
