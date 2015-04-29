@@ -3,21 +3,22 @@ import scipy as sp
 import matplotlib.pyplot as plt
 
 ## This script shows how to solve 1D heat equation numerically.
-# Here we shave start from a hot spot in the middle of a 1D rod
+# Here we have population pressure drive diffusion based on
+# Murray's math bio eqn 11.20
 
 ## initialise parameters of heat equation
-depth = 10. # length of the rod
-timeTotal = 5. # simulation time 
+depth = 10.
+timeTotal = 5.
 K = 1 # diffusion coefficient
-
+period = 1. # heat oscillation period
+n0 = 1. # pop press constant
+m = 1. # pop press constant
 
 ## specify parameter for numerical solution
 Nz = 400. # number of discrete step in space
 dz = depth/Nz # size of discrete step in space
 # array of each location in our discrete space
-# size of discrete step in time, note that
-# dt<=dz**2/2/K for stability of numerical solution
-dt = 0.9*dz**2/2/K 
+dt = 0.9*dz**2/2 # size of discrete step in time, note that dt<=dz**2/2 for stability of numerical solution
 Z_range = np.arange(0,depth+dz,dz)
 t_range = np.arange(0, timeTotal, dt)
 Nt = int(timeTotal/dt) # total number of discrete time points
@@ -30,8 +31,11 @@ T[midpoint,0] = 100 # initial temperature
 
 ## iterate through each time point and calculate 
 for i in range(1, Nt):
-    # second derivative of temperature in space
-    depth_2D = (T[0:-2, i-1]-2*T[1:-1,i-1]+T[2:,i-1])/dz**2
+    # first derivative in space
+    depth_1Da = ((T[1:-1,i-1]/n0)**m)*(T[1:-1,i-1] - T[2:,i-1])/dz
+    depth_1Db = ((T[0:-2,i-1]/n0)**m)*(T[0:-2,i-1] - T[1:-1,i-1])/dz
+    # second derivative in space
+    depth_2D = (depth_1Db-depth_1Da)/dz
     # first derivative of temperature in time
     time_1D = K*depth_2D
     # calculate next time point temperature for each non-boundary point
@@ -84,4 +88,6 @@ plt.colorbar(orientation='horizontal', ticks = colorRange)
 
 plt.show()
 
-
+#print T[:,0]
+#print T[:,1]
+#print T[:,2]
