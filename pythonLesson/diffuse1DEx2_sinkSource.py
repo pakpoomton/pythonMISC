@@ -27,7 +27,7 @@ midpoint = int(Nz/2) # mid point in discrete space
 ## initialise solution matrix
 # each row for each different locations; each column for each time point
 T = np.zeros((Nz+1, Nt+1)) 
-#T[midpoint,0] = 100 # initial temperature
+
 
 ## iterate through each time point and calculate 
 for i in range(1, Nt):
