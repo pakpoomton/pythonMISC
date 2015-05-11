@@ -94,7 +94,7 @@ channelIndList = map(getChannelInd, dataHeaderRow)
 channelDiff =  np.diff(channelIndList, n=1, axis=0)
 channelChange =  channelDiff.ravel().nonzero()
 channelChange = np.array([0]+list(channelChange[0]+1)+[len(dataHeaderRow)])
-
+channelStartInd = channelChange
 ## ----------------------------------
 ## GENERATING PLOT
 # get measurement results from blank well (LB without cell)

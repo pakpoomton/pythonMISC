@@ -25,7 +25,7 @@ c3 = 1
 Nz = 100. # number of discrete step in space
 dz = depth/Nz # size of discrete step in space
 # array of each location in our discrete space
-dt = 0.9*dz**2/2/max(k_u,k_v) # size of discrete step in time, note that dt<=dz**2/2 for stability of numerical solution
+dt = 0.9*dz**2/2/max(k_u,k_v) # size of discrete step in time, note that dt<=dz**2/4 for stability of numerical solution
 Z_range = np.arange(0,depth+dz,dz)
 t_range = np.arange(0, timeTotal, dt)
 Nt = int(timeTotal/dt) # total number of discrete time points

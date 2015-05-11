@@ -3,7 +3,7 @@ import scipy as sp
 import matplotlib.pyplot as plt
 
 ## This script shows how to solve 1D heat equation numerically.
-# Here we have oscillating temperature on one end
+# Here we have oscillating temperature in the middle
 
 ## initialise parameters of heat equation
 depth = 10.
@@ -24,8 +24,8 @@ midpoint = int(Nz/2) # mid point in discrete space
 ## initialise solution matrix
 # each row for each different locations; each column for each time point
 T = np.zeros((Nz+1, Nt+1)) 
-Tleft = 100*(np.sin(2*np.pi*t_range/period)+1)/2
-T[0,:] = Tleft
+#Tleft = 100*(np.sin(2*np.pi*t_range/period)+1)/2
+#T[0,:] = Tleft
 
 ## iterate through each time point and calculate 
 for i in range(1, Nt):
@@ -35,9 +35,10 @@ for i in range(1, Nt):
     time_1D = K*depth_2D
     # calculate next time point temperature for each non-boundary point
     T[1:-1,i] = T[1:-1,i-1]+dt*time_1D
-    # apply boundary condition on right end saying that no heat going in/out
+    T[midpoint,i] = 100*(np.sin(2*np.pi*dt*i/period)+1)/2
+    # apply boundary condition on left/right end: no heat going in/out
     T[Nz,i] = T[Nz-1,i]
-    
+    T[0,i] = T[1,i]
 
 ## display the result
 # we will plot heat distribution from four different time points
