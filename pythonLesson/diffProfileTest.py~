@@ -2,16 +2,15 @@ import numpy as np
 import scipy as sp
 import matplotlib.pyplot as plt
 
-## This script shows how to solve 1D heat equation numerically.
-# Here we generate from a point at ~ 1/4 from one boundary
-# and absorb heat from a point at ~ 1/4 from another boundary
+## This script is for testing different steady-state diffusion profiles
+## we could create by having differnt sink and source efficiency
 
 ## initialise parameters of heat equation
 depth = 10.
-timeTotal = 20.
+timeTotal = 5.
 K = 1 # diffusion coefficient
 prod = 1 # heat generation rate
-deg = .05 # head absorption rate
+deg = 1 # head absorption rate
 
 ## specify parameter for numerical solution
 Nz = 400. # number of discrete step in space
@@ -21,7 +20,7 @@ Z_range = np.arange(0,depth+dz,dz)
 dt = 0.9*dz**2/2 # size of discrete step in time, note that dt<=dz**2/2 for stability of numerical solution
 Nt = int(timeTotal/dt) # total number of discrete time points
 heatGen = int(Nz/4) # location that heat gets generated
-heatLos = int(3*Nz/4) # location that heat get absorbed away
+#heatLos = int(3*Nz/4) # location that heat get absorbed away
 midpoint = int(Nz/2) # mid point in discrete space
 
 ## initialise solution matrix
@@ -37,8 +36,8 @@ for i in range(1, Nt):
     time_1D = K*depth_2D
     # calculate next time point temperature for each non-boundary point
     T[1:-1,i] = T[1:-1,i-1]+dt*time_1D
-    T[heatGen, i] = T[heatGen, i] + prod # add heat
-    T[heatLos, i] = T[heatLos, i] - deg*T[heatLos, i-1] # add heat
+    T[1:heatGen, i] = T[1:heatGen, i-1] + prod - deg*T[heatLos, i-1]# add heat
+    T[heatGen:heatLos, i] = T[heatGen:heatLos, i-1] - deg*T[heatGen:heatLos, i-1] # add heat
     # apply boundary condition on both ends saying that no heat going in/out
     T[Nz,i] = T[Nz-1,i]
     T[0,i] = T[1,i]
