@@ -10,10 +10,10 @@ satLevel = 10
 
 ## initialise parameters of heat equation
 depth = 4.
-timeTotal =  .01
+timeTotal = 1.
 K = 1 # diffusion coefficient
 prod = 1 # heat generation rate
-deg = .01 # head absorption rate
+deg = 0.01#.01 # head absorption rate
 
 ## specify parameter for numerical solution
 Nz = 200. # number of discrete step in space
@@ -56,31 +56,12 @@ sampleTarray = map(str,sampleTarray)
 Tshow = np.flipud(T.transpose())
 
 
-# plot location vs temperature at four different time points
-plt.subplot(311)
-plt.plot(Z_range, T[:, 1*sampleT] , color = 'r', label= 't = '+sampleTarray[0])
-plt.plot(Z_range, T[:, 2*sampleT] , color = 'g', label= 't = '+sampleTarray[1])
-plt.plot(Z_range, T[:, 3*sampleT] , color = 'b', label= 't = '+sampleTarray[2])
-plt.plot(Z_range, T[:, 4*sampleT] , color = 'k', label= 't = '+sampleTarray[3])
-plt.ylabel('temperature')
-plt.xticks([]) 
-plt.legend(loc=1)
 
-
-# plot location vs temperature at four different time points
-plt.subplot(312)
-plt.plot(Z_range, T[:, 1*sampleT] , color = 'r')
-plt.plot(Z_range, T[:, 2*sampleT] , color = 'g')
-plt.plot(Z_range, T[:, 3*sampleT] , color = 'b')
-plt.plot(Z_range, T[:, 4*sampleT] , color = 'k')
-plt.ylabel('temperature')
-plt.xticks([]) 
-plt.axis([0, depth, 0, satLevel])
 
 
 
 # make heatmap of temperature in location and time
-plt.subplot(313)
+#plt.subplot(313)
 plt.imshow(Tshow, cmap=plt.cm.hot, interpolation='nearest', origin='lower', vmin = 0, vmax = satLevel)
 #plt.imshow(Tshow, cmap=plt.cm.hot, interpolation='nearest', origin='lower')
 
@@ -104,7 +85,7 @@ Tmax = Tshow.max()
 Tstep = (Tmax-Tmin)/4
 colorRange = np.arange(Tmin, Tmax+Tstep, Tstep)
 colorRange = np.round(colorRange, 2)
-plt.colorbar(orientation='horizontal', ticks = colorRange)
+plt.colorbar(orientation='horizontal')
 
 plt.show()
 

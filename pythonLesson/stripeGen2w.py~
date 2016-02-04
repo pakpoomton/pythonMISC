@@ -12,19 +12,19 @@ start = time.time()
 ## initialise parameters of heat equation
 depth = 60. # in this case the width of space to generate  pattern
 celSize = 1. # this is expected size of the initial band
-timeTotal = 6000.
+timeTotal = 150.
 
 sc = 30
-MM = 1
 
-D = .001*sc*sc/300 # diffusion rate of s1 and s2 signal
+
+D = .001*sc*sc # diffusion rate of s1 and s2 signal
 Ka = 0.02 # maximal switching rate of c0->c1s and c0->c2s
 Km = 100 # [s2] and [s1] at half maximal swiching rate of c0->c1s and c0->c2s
-A = 10000*MM # production rate of s1 and s2 from from c1 and c2
-Ga = .01*MM #maximal degradation rate s1 and s2
+A = 10000 # production rate of s1 and s2 from from c1 and c2
+Ga = .01 #maximal degradation rate s1 and s2
 Gm = 1 # [s1] and [s2] at half maximal degradation rate
 
-Tau = 300# the delay time unit for c1s->c1 and c2s->c2 conversion
+Tau = 1# the delay time unit for c1s->c1 and c2s->c2 conversion
 
 #signal saturation level for making heatmap
 satLevel = Km*2
@@ -41,7 +41,7 @@ Nt = int(timeTotal/dt) # total number of discrete time points in simulation
 NTau = int(Tau/dt) # total number of discrete time for production delay.
 cel = int(Nz*celSize/depth)
 
-print(str(dt))
+
 
 ## initialise solution matrix
 # each row for each different locations; each column for each time point
@@ -77,7 +77,7 @@ for i in range(1,  Nt+1):
     # calculate next time point cell type fraction
     outC1s = np.copy(C1s[:, NTau])
     oldC1s = np.copy(C1s[:, 0:NTau])
-    inC1s = C0[:,i-1]*dt*MM*S2[:,i-1]*Ka/(S2[:,i-1]+Km)
+    inC1s = C0[:,i-1]*S2[:,i-1]*Ka/(S2[:,i-1]+Km)
     C1s[:,0] = np.copy(inC1s)
     C1s[:,1:NTau+1] = np.copy(oldC1s)
 
@@ -113,8 +113,8 @@ for i in range(1,  Nt+1):
     S1[1:-1,i] = S1c + dt*timeS1_1D 
     S2[1:-1,i] = S2c + dt*timeS2_1D
 
-    S1[1:-1,i] = S1[1:-1,i] + dt*A*C1[1:-1,i] - dt*Ga*S1[1:-1,i]
-    S2[1:-1,i] = S2[1:-1,i] + dt*A*C2[1:-1,i] - dt*Ga*S2[1:-1,i]
+    S1[1:-1,i] = S1[1:-1,i] + A*C1[1:-1,i] - Ga*S1[1:-1,i]
+    S2[1:-1,i] = S2[1:-1,i] + A*C2[1:-1,i] - Ga*S2[1:-1,i]
     
 
     # apply boundary condition on both ends saying that nothing going in/out

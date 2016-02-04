@@ -8,12 +8,13 @@ import matplotlib.pyplot as plt
 #signal saturation level
 satLevel = 10
 
+MM = 10000
 ## initialise parameters of heat equation
 depth = 4.
-timeTotal =  .01
+timeTotal =  1000.
 K = 1 # diffusion coefficient
-prod = 1 # heat generation rate
-deg = .01 # head absorption rate
+prod = 1*MM # heat generation rate
+deg = .01*MM # head absorption rate
 
 ## specify parameter for numerical solution
 Nz = 200. # number of discrete step in space
@@ -30,7 +31,7 @@ qt2 = int(Nz/2) # mid point in discrete space
 # each row for each different locations; each column for each time point
 T = np.zeros((Nz+1, Nt+1)) 
 
-
+print(str(dt))
 ## iterate through each time point and calculate 
 for i in range(1, Nt):
     # second derivative of temperature in space
@@ -39,8 +40,8 @@ for i in range(1, Nt):
     time_1D = K*depth_2D
     # calculate next time point temperature for each non-boundary point
     T[1:-1,i] = T[1:-1,i-1]+dt*time_1D
-    T[1:qt1, i] = T[1:qt1, i] + prod# add heat
-    T[1:Nz-1, i] = T[1:Nz-1, i] - deg*T[1:Nz-1, i] # remove heat
+    T[1:qt1, i] = T[1:qt1, i] + dt*prod# add heat
+    T[1:Nz-1, i] = T[1:Nz-1, i] - dt*deg*T[1:Nz-1, i] # remove heat
     # apply boundary condition on both ends saying that no heat going in/out
     T[Nz,i] = T[Nz-1,i]
     T[0,i] = T[1,i]
@@ -49,7 +50,7 @@ for i in range(1, Nt):
 # we will plot heat distribution from four different time points
 sampleT= int(Nt/4)
 sampleTarray = sampleT*np.array([1,2,3,4])*timeTotal/Nt
-sampleTarray = np.round(sampleTarray,2)
+sampleTarray = np.round(sampleTarray,4)
 sampleTarray = map(str,sampleTarray)
 
 #Tshow = np.flipud(T[:, sampleT:].transpose())
@@ -57,54 +58,16 @@ Tshow = np.flipud(T.transpose())
 
 
 # plot location vs temperature at four different time points
-plt.subplot(311)
 plt.plot(Z_range, T[:, 1*sampleT] , color = 'r', label= 't = '+sampleTarray[0])
 plt.plot(Z_range, T[:, 2*sampleT] , color = 'g', label= 't = '+sampleTarray[1])
 plt.plot(Z_range, T[:, 3*sampleT] , color = 'b', label= 't = '+sampleTarray[2])
 plt.plot(Z_range, T[:, 4*sampleT] , color = 'k', label= 't = '+sampleTarray[3])
 plt.ylabel('temperature')
-plt.xticks([]) 
+#plt.xticks([]) 
 plt.legend(loc=1)
-
-
-# plot location vs temperature at four different time points
-plt.subplot(312)
-plt.plot(Z_range, T[:, 1*sampleT] , color = 'r')
-plt.plot(Z_range, T[:, 2*sampleT] , color = 'g')
-plt.plot(Z_range, T[:, 3*sampleT] , color = 'b')
-plt.plot(Z_range, T[:, 4*sampleT] , color = 'k')
-plt.ylabel('temperature')
-plt.xticks([]) 
-plt.axis([0, depth, 0, satLevel])
-
-
-
-# make heatmap of temperature in location and time
-plt.subplot(313)
-plt.imshow(Tshow, cmap=plt.cm.hot, interpolation='nearest', origin='lower', vmin = 0, vmax = satLevel)
-#plt.imshow(Tshow, cmap=plt.cm.hot, interpolation='nearest', origin='lower')
-
-plt.axis('auto')
-plt.axis([0, Nz+1, 0, Nt+1])
-zStep = int(Nz/4) # plot five locations on x-axis
-xbound = np.arange(0, Nz+1, zStep)
-xlabel = map(str, xbound*depth/Nz)
-ybound = [0, Nt-sampleT]
-tSD =  round(timeTotal*sampleT/Nt, 2)
-Tdisplay = [0, tSD, 2*tSD, 3*tSD, 4*tSD]
-Ttickloc = [4*sampleT, 3*sampleT, 2*sampleT, 1*sampleT, 0]
-TdisplayTxt = map(str, Tdisplay)
-plt.xticks(xbound, xlabel) 
-plt.yticks(Ttickloc, TdisplayTxt)
 plt.xlabel('location')
-plt.ylabel('time')
-# setup color bar
-Tmin = Tshow.min()
-Tmax = Tshow.max()
-Tstep = (Tmax-Tmin)/4
-colorRange = np.arange(Tmin, Tmax+Tstep, Tstep)
-colorRange = np.round(colorRange, 2)
-plt.colorbar(orientation='horizontal', ticks = colorRange)
+plt.ylabel('temperature')
+plt.axis([0, depth, -0.1, 1.1*100])
 
 plt.show()
 

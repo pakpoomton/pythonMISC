@@ -1,0 +1,11 @@
+import numpy as np
+
+N = 1000 #number of tern in the series
+
+
+A = 1.
+B = 0.01
+w = 1.
+L = 4.
+pi = np.pi
+

@@ -10,10 +10,10 @@ satLevel = 10
 
 ## initialise parameters of heat equation
 depth = 4.
-timeTotal =  .01
+timeTotal = 1.
 K = 1 # diffusion coefficient
-prod = 1 # heat generation rate
-deg = .01 # head absorption rate
+prod = .1 # heat generation rate
+deg =0# 0.001#.01 # head absorption rate
 
 ## specify parameter for numerical solution
 Nz = 200. # number of discrete step in space
