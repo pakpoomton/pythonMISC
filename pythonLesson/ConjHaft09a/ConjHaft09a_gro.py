@@ -6,6 +6,8 @@ import time
 
 startTime = time.time() # time when simulation starts
 
+scg = 0.02 # scaling down infected scale growth rate
+
 # parameter set based on Table 1 of Haft et al 2009
 N_0 = 10**6.5 # initial density of plasmid-free cells (CFU/ml)
 P1a_0 = 0 # initial density of cells w/ transitory-derepressed Pfin+ (CFU/ml)
@@ -13,9 +15,9 @@ P1b_0 = 10**4.5 # initial density of cells w/ Pfin+ (CFU/ml)
 P2_0 = 10**4.5 # initial density of cells w/ Pfin- (CFU/ml)
 C_0 = 200 # initial conc of resource, C (ug/ml)
 rN = 1.459 # growth rate of N (/h)
-r1a = 1.230 # growth rate of P1a (/h)
-r1b = 1.405 #  growth rate of P1b (/h)
-r2 =  1.230 # growth rate of P2 (/h)
+r1a = scg*1.230 # growth rate of P1a (/h)
+r1b = scg*1.405 #  growth rate of P1b (/h)
+r2 =  scg*1.230 # growth rate of P2 (/h)
 y1a = 3.8e-9 # conjugation rate of P1a donors (ml/cell/h)
 y1b = 4.4e-12 # conjugation rate of P1b donors (ml/cell/h)
 y2 = 3.8e-9 # conjugation rate of P2 donors (ml/cell/h)
@@ -25,7 +27,9 @@ f1 = 0.1 # fin repression rate for Pfin+
 Km = 0.2 # Monod constant (ug/ml)
 Y = 8e-8 # yield coefficient (ug/CFU)
 
-Cyc = 500 # number of growth cycles (i.e. 24 hr dilution cycle)
+
+
+Cyc = 100 # number of growth cycles (i.e. 24 hr dilution cycle)
 # ** try 500 cycles to see oscillation!
 dFold = 1000. # dilution fold for each growth cycle
 
@@ -88,7 +92,8 @@ for k in range(0, Cyc):
         C_final = soln[-1,4]
         
         # dilute the sample and regrow in fresh media at the end of the cycle
-        startState = [N_final/dFold, P1a_final/dFold, P1b_final/dFold, \
+        startState = [N_final/dFold, \
+                      P1a_final/dFold, P1b_final/dFold, \
                       P2_final/dFold, C_final/dFold + \
                       C_0*(dFold-1)/dFold]
           
@@ -130,7 +135,8 @@ plt.plot(tALL, P2_array, label='fin-')
 plt.xlabel('time(hr)')
 plt.ylabel('log10(CFU/mL)')
 plt.title('Plasmid Infection Dynamics')
-plt.legend(loc=1)
+plt.axis([0, 2500, 0, 10])
+plt.legend(loc=4)
 
 
 plt.subplot(212)
@@ -140,7 +146,8 @@ plt.plot(dayArray, P2d_array, "^-", label='fin-')
 #plt.plot(dayArray, Cd_array, label='food')
 plt.xlabel('time (day)')
 plt.ylabel('log10(CFU/mL)')
-plt.legend(loc=1)
+plt.axis([0, 100, 0, 10])
+plt.legend(loc=4)
 
 plt.show()
 

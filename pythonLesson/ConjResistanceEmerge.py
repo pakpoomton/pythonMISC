@@ -6,38 +6,42 @@ import time
 
 startTime = time.time() # time when simulation starts
 
+sc = .001# conj rate scaling
+gsc = .1 # growth scaling 
+
+
 # parameter set based on Table 1 of Haft et al 2009
 N_0 = 10**6.5 # initial density of plasmid-free cells (CFU/ml)
 P1a_0 = 0 # initial density of cells w/ transitory-derepressed Pfin+ (CFU/ml)
 P1b_0 = 10**4.5 # initial density of cells w/ Pfin+ (CFU/ml)
 P2_0 = 10**4.5 # initial density of cells w/ Pfin- (CFU/ml)
 C_0 = 200 # initial conc of resource, C (ug/ml)
-rN = 1.459 # growth rate of N (/h)
-r1a = 1.230 # growth rate of P1a (/h)
-r1b = 1.405 #  growth rate of P1b (/h)
-r2 =  1.230 # growth rate of P2 (/h)
-y1a = 3.8e-9 # conjugation rate of P1a donors (ml/cell/h)
-y1b = 4.4e-12 # conjugation rate of P1b donors (ml/cell/h)
-y2 = 3.8e-9 # conjugation rate of P2 donors (ml/cell/h)
+rN = gsc*1.459 # growth rate of N (/h)
+r1a = gsc*1.23 # growth rate of P1a (/h)
+r1b = gsc*1.23 #  growth rate of P1b (/h)
+r2 =  gsc*1.6 # growth rate of P2 (/h)
+y1a = sc*3.8e-9 # conjugation rate of P1a donors (ml/cell/h)
+y1b = sc*3.8e-9 # conjugation rate of P1b donors (ml/cell/h)
+y2 = sc*3.8e-9 # conjugation rate of P2 donors (ml/cell/h)
 s1 = 1e-4 # segregation rate for Pfin+
 s2 = 1e-4 # segregation rate for Pfin-
 f1 = 0.1 # fin repression rate for Pfin+
 Km = 0.2 # Monod constant (ug/ml)
 Y = 8e-8 # yield coefficient (ug/CFU)
 
-Cyc = 500 # number of growth cycles (i.e. 24 hr dilution cycle)
+Cyc = 10 # number of growth cycles (i.e. 24 hr dilution cycle)
 # ** try 500 cycles to see oscillation!
 dFold = 1000. # dilution fold for each growth cycle
 
 # setup an initial condition vector
-initState = [N_0, P1a_0, P1b_0, P2_0, C_0]
+initState = [N_0, P1a_0, P1b_0, 0, C_0]
 
 # setup time vector (h) for each growth cycle
 t = np.linspace(0, 24., 1000) # time grid
 
 solnALL = np.copy([initState]) # array to store all time course solution
 solnEndDay = np.copy([initState]) # array to store end of day condition
-tALL = np.linspace(t[0], t[-1]*Cyc, len(t)*Cyc) # all time array
+tALL = np.linspace(t[0], t[-1]*Cyc, len(t)*2*Cyc) # all time array
 
 # define growth equation (growth depend on available nutrient)
 def grow(nutrient):
@@ -91,7 +95,30 @@ for k in range(0, Cyc):
         startState = [N_final/dFold, P1a_final/dFold, P1b_final/dFold, \
                       P2_final/dFold, C_final/dFold + \
                       C_0*(dFold-1)/dFold]
-          
+
+
+startState[3] = P2_0
+      
+for k in range(0, Cyc):
+        soln = odeint(dState, startState, t) # solve ODEs for this cycle
+        solnALL = np.concatenate((solnALL, soln), axis=0) # store result
+        
+        # get ODEs result at the end of the day and store 
+        solnEnd = np.array([soln[-1,:]]) 
+        solnEndDay = np.concatenate((solnEndDay, solnEnd), axis=0)
+
+        # no. of each cell type and resource level at the end of the cycle 
+        N_final =  soln[-1,0]
+        P1a_final = soln[-1,1]
+        P1b_final = soln[-1,2]
+        P2_final = soln[-1,3]
+        C_final = soln[-1,4]
+        
+        # dilute the sample and regrow in fresh media at the end of the cycle
+        startState = [N_final/dFold, P1a_final/dFold, P1b_final/dFold, \
+                      P2_final/dFold, C_final/dFold + \
+                      C_0*(dFold-1)/dFold]        
+        
 ########
 
 
@@ -117,7 +144,7 @@ P2d_array = np.log10(P2d_array)
 Cd_array = np.log10(Cd_array)
 
 ########
-dayArray = np.array(range(0,Cyc+1)) # end of cycle array index (for plotting)
+dayArray = np.array(range(0,2*Cyc+1)) # end of cycle array index (for plotting)
 
 print time.time()-startTime, "seconds wall time"
 

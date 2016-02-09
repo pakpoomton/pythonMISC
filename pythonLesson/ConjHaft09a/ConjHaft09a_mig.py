@@ -25,7 +25,9 @@ f1 = 0.1 # fin repression rate for Pfin+
 Km = 0.2 # Monod constant (ug/ml)
 Y = 8e-8 # yield coefficient (ug/CFU)
 
-Cyc = 500 # number of growth cycles (i.e. 24 hr dilution cycle)
+N_mig = 10**6.4 # plasmid free cell migration each dilution cycle
+
+Cyc = 100 # number of growth cycles (i.e. 24 hr dilution cycle)
 # ** try 500 cycles to see oscillation!
 dFold = 1000. # dilution fold for each growth cycle
 
@@ -88,7 +90,8 @@ for k in range(0, Cyc):
         C_final = soln[-1,4]
         
         # dilute the sample and regrow in fresh media at the end of the cycle
-        startState = [N_final/dFold, P1a_final/dFold, P1b_final/dFold, \
+        startState = [N_final/dFold + N_mig*(dFold-1)/dFold, \
+                      P1a_final/dFold, P1b_final/dFold, \
                       P2_final/dFold, C_final/dFold + \
                       C_0*(dFold-1)/dFold]
           
@@ -130,7 +133,8 @@ plt.plot(tALL, P2_array, label='fin-')
 plt.xlabel('time(hr)')
 plt.ylabel('log10(CFU/mL)')
 plt.title('Plasmid Infection Dynamics')
-plt.legend(loc=1)
+plt.axis([0, 2500, 0, 10])
+plt.legend(loc=4)
 
 
 plt.subplot(212)
@@ -140,7 +144,8 @@ plt.plot(dayArray, P2d_array, "^-", label='fin-')
 #plt.plot(dayArray, Cd_array, label='food')
 plt.xlabel('time (day)')
 plt.ylabel('log10(CFU/mL)')
-plt.legend(loc=1)
+plt.axis([0, 100, 0, 10])
+plt.legend(loc=4)
 
 plt.show()
 

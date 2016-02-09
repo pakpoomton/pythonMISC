@@ -25,7 +25,7 @@ f1 = 0.1 # fin repression rate for Pfin+
 Km = 0.2 # Monod constant (ug/ml)
 Y = 8e-8 # yield coefficient (ug/CFU)
 
-Cyc = 500 # number of growth cycles (i.e. 24 hr dilution cycle)
+Cyc = 10 # number of growth cycles (i.e. 24 hr dilution cycle)
 # ** try 500 cycles to see oscillation!
 dFold = 1000. # dilution fold for each growth cycle
 

@@ -9,8 +9,8 @@ startTime = time.time() # time when simulation starts
 # parameter set based on Table 1 of Haft et al 2009
 N_0 = 10**6.5 # initial density of plasmid-free cells (CFU/ml)
 P1a_0 = 0 # initial density of cells w/ transitory-derepressed Pfin+ (CFU/ml)
-P1b_0 = 10**4.5 # initial density of cells w/ Pfin+ (CFU/ml)
-P2_0 = 10**4.5 # initial density of cells w/ Pfin- (CFU/ml)
+P1b_0 = 0 # initial density of cells w/ Pfin+ (CFU/ml)
+P2_0 = 10**4.5  # initial density of cells w/ Pfin- (CFU/ml)
 C_0 = 200 # initial conc of resource, C (ug/ml)
 rN = 1.459 # growth rate of N (/h)
 r1a = 1.230 # growth rate of P1a (/h)
@@ -25,7 +25,7 @@ f1 = 0.1 # fin repression rate for Pfin+
 Km = 0.2 # Monod constant (ug/ml)
 Y = 8e-8 # yield coefficient (ug/CFU)
 
-Cyc = 500 # number of growth cycles (i.e. 24 hr dilution cycle)
+Cyc = 10 # number of growth cycles (i.e. 24 hr dilution cycle)
 # ** try 500 cycles to see oscillation!
 dFold = 1000. # dilution fold for each growth cycle
 
@@ -124,7 +124,7 @@ print time.time()-startTime, "seconds wall time"
 # plot results
 plt.subplot(211)
 plt.plot(tALL, N_array, label='Free')
-plt.plot(tALL, P1_array, label='fin+')
+#plt.plot(tALL, P1_array, label='fin+')
 plt.plot(tALL, P2_array, label='fin-')
 #plt.plot(tALL, C_array, label='food')
 plt.xlabel('time(hr)')
@@ -135,7 +135,7 @@ plt.legend(loc=1)
 
 plt.subplot(212)
 plt.plot(dayArray, Nd_array, "D-", label='Free')
-plt.plot(dayArray, P1d_array, "s-", label='fin+')
+#plt.plot(dayArray, P1d_array, "s-", label='fin+')
 plt.plot(dayArray, P2d_array, "^-", label='fin-')
 #plt.plot(dayArray, Cd_array, label='food')
 plt.xlabel('time (day)')
